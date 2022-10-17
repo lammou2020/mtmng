@@ -1,0 +1,77 @@
+{#
+# Copyright 2020 Inc.
+#}
+
+{% extends "esasset/base.html" %}
+
+{% block content %}
+<style>
+  td {padding-right: 5px;padding-left: 5px;}
+</style>
+{% if session.profile and session.profile.Role == "1" %}
+<h4>資產項目</h4>
+<a href="/EsAsset/add" class="btn btn-success btn-sm">
+  <i class="glyphicon glyphicon-plus"></i>
+  Add 專案
+</a>
+<small>按單據或專案項目劃分項目</small>
+{% endif %}
+{% for book in books %}
+<div class="media">
+    <div class="media-left">
+      {% if book.imageUrl %}
+        <img style="max-width:100px" src="{{book.imageUrl}}">
+      {% else %}
+      <img style="max-width:100px;width:100px" src="/static/images/report1.png">
+      {% endif %}
+    </div>
+    <div class="media-body">
+      <table class="table">
+        <tr>
+          <td>id,項目代號</td>
+          <td>專案項目名稱</td>
+          <td>訂單編號</td>
+          <td>登記日期</td>
+          <td>傳票編號</td>
+          <td>vendor供應商</td>
+          <td>用戶</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/EsAsset/{{book.id}}">{{book.id}}.{{book.acno}}</a>
+          </td>
+          <td>
+            <h4>{{book.acc}}</h4>
+          </td>
+          <td>
+            {{book.orderNo}}
+          </td>
+          <td>
+            {{book.regSDate}}
+          </td>
+          <td>
+            {{book.voucherNo}}
+          </td>
+          <td>
+            {{book.vendor}}
+          </td>
+          <td>
+            {{book.createdById}}
+          </td>
+      </table>
+      <p>{{book.describ | safe}}</p>
+    </div>
+</div>
+{% else %}
+<p>No found</p>
+{% endfor %}
+
+{% if next_page_token %}
+<nav>
+  <ul class="pager">
+    <li><a href="?page_token={{next_page_token}}">More</a></li>
+  </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

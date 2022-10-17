@@ -1,0 +1,150 @@
+{#
+    # Copyright 2015 Inc.
+    #}
+    
+    {% extends "esasset/base.html" %}
+    
+    {% block content %}
+    <script src='/static/javascripts/cool/grid_v2.js?v=2' ></script>
+    <script src='/static/javascripts/cool/table2csv.js' ></script>
+    <link rel='stylesheet' href='/static/javascripts/cool/grid.css'  />
+    <style>
+      td {padding-right: 5px; padding-left: 5px; }
+      th{min-width: 100px;}
+    </style>
+    <h4>{{book.Lesson}} {{book.Title}}</h4>
+    {% if session.profile and session.profile.Role < "8" %} <div class="btn-group">
+      <a href="/EsAsset/{{book.id}}" class="btn btn-primary btn-sm">
+        <i class="glyphicon glyphicon-edit"></i>
+        返回 專案
+      </a>
+      <a href="#" class="btn btn-primary btn-sm" id="exportCSV">
+        <i class="glyphicon glyphicon-edit"></i>
+        下戴CSV
+       </a>
+       <a href="#" class="btn btn-primary btn-sm" id="editbtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        編輯
+       </a>     
+       <a href="#" class="btn btn-primary btn-sm"id="readmodebtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        唯讀
+       </a>
+       <a href="#" class="btn btn-success btn-sm" id="savebtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        儲存
+       </a>
+  
+      </div>
+      {% endif %}
+      <div class="media">
+        <div class="media-left">
+          {% if book.imageUrl %}
+          <img class="book-image" src="{{book.imageUrl}}">
+          {% else %}
+          {% endif %}
+        </div>
+    
+      </div>
+      <div class="media-body">
+        <table>
+          <tr>
+            <td>id,項目代號</td>
+            <td>專案項目名稱</td>
+            <td>登記日期</td>
+            <td>createdById</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="/EsAsset/{{book.id}}">{{book.id}}.{{book.acno}}</a>
+            </td>
+            <td><h4>{{book.acc}}</h4>
+            </td>
+            <td>
+              {{book.regSDate}}
+            </td>
+            <td>
+              {{book.createdById}}
+            </td>
+        </table>
+        <p>{{book.describ | safe}}</p>
+      </div>
+      {% if session.profile and session.profile.Role < "8" %} <div class="btn-group">
+      {% endif %}
+    <h3>明細</h3>
+    
+    
+    <table id=EDUTBL  class="table">
+        <tr>
+          <td class="small">序</td>
+          <td class="small">編號</td>
+          <td id="MA_H">校內編號</td>
+          <td id="MB_H" style="min-width: 100px;">產品名稱</td>
+          <td id="MC_H">型號</td>
+          <td id="MD_H">SN/PN</td>
+          <td id="ME_H">數量</td>
+          <td id="MF_H">單價</td>
+          <td id="MG_H">攤折</td>
+          <td id="MH_H">淨值</td>
+          <td id="MJ_H">資助額</td>
+          <td id="MJ_H">資助單位/個人</td>
+          <td id="MK_H">位置</td>
+          <td id="ML_H">保管人</td>
+          <td id="MM_H">備註</td>
+          <td id="MN_H">登錄日期</td>
+          <td>專案編號</td>
+        </tr>
+        
+      {% for item_ in items %}
+        <tr>
+          <td class="small">{{loop.index}}</td>
+          <td class="small"><a href="/EsAsset/{{book.id}}/item/{{item_.id}}">{{item_.id}}</a></td>
+          <td class="M" id="MA_itemno_{{item_.id}}">{{item_.itemno}}</td>
+          <td class="M" id="MB_name_{{item_.id}}">{{item_.name}}</td>
+          <td class="M" id="MC_model_{{item_.id}}">{{item_.model}}</td>
+          <td class="M" id="MD_sn_{{item_.id}}">{{item_.sn}}</td>
+          <td class="M" id="ME_quantity_{{item_.id}}">{{item_.quantity}}</td>
+          <td class="M" id="MF_price_{{item_.id}}">{{item_.price}}</td>
+          <td class="M" id="MG_adjust_{{item_.id}}">{{item_.adjust}}</td>
+          <td class="M" id="MH_amount_{{item_.id}}">{{item_.amount}}</td>
+          <td class="M" id="MI_depr-ed_{{item_.id}}">{{item_.depr_ed}}</td>
+          <td class="M" id="MJ_insure_{{item_.id}}">{{item_.insure}}</td>
+          <td class="M" id="MK_note1_{{item_.id}}">{{item_.note1}}</td>
+          <td class="M" id="ML_keeper_{{item_.id}}">{{item_.keeper}}</td>
+          <td class="M" id="MM_note2_{{item_.id}}">{{item_.note2}}</td>
+          <td class="M" id="MN_regSDate_{{item_.id}}">{{item_.regSDate}}</td>
+          {% if session.profile and  session.profile.user=='admin' %}
+          <td class="M" id="MZ_acc-acno_{{item_.id}}">{{item_.acc_acno}}</td>
+          {% else %}
+          <td>{{item_.acc_acno}}</td>
+          {% endif %}   
+        </tr>
+      {% else %}
+      <tr><td>No item found</td></tr>
+      {% endfor %}
+    </table>
+    
+
+    
+    
+    <script>
+      $("#exportCSV").on('click', function(event) {
+        var args = [$('#EDUTBL'), 'export_{{book.acc}}_items.csv'];
+        exportTableToCSV.apply(this, args);
+      });
+  
+      var PostUrl='item/api/JSON/update' ;    
+      $(document).ready(function(){
+          BindingFunctions("editbtn","savebtn",'readmodebtn');
+          BindingHead_EditMode(['MA_H','MB_H','MC_H','MD_H','ME_H','MF_H','MG_H','MH_H','MI_H',,'MJ_H',
+        'MK_H','ML_H','MM_H','MN_H','MO_H','MP_H','MQ_H','MR_H','MS_H','MT_H','MU_H','MV_H','MW_H']);
+          BindingFieldDefsIntegerFields({'MA':'INT','ME':'INT','MF':'INT','MG':'INT','MH':'INT','MI':'INT'});
+          GenOriginalData();
+      });  
+     
+      </script>
+  
+    
+    
+    
+    {% endblock %}

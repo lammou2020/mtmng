@@ -1,0 +1,79 @@
+{#
+# Copyright 2015  Inc.
+#}
+
+{% extends "lessons/base.html" %}
+
+{% block content %}
+
+<h4>{{book.Lesson}} {{book.Title}}</h4>
+{% if session.profile and session.profile.Role < "8" %}
+<div class="btn-group">
+  <a onclick="window.location.href ='/lessons/{{book.id}}/downloadall?{{ range(1, 100) | random }}'+Math.random()" class="btn btn-primary btn-sm">
+    <i class="glyphicon glyphicon-edit"></i>
+    Zip Lesson
+  </a>  
+  <a href="/lessons/{{book.id}}/edit" class="btn btn-primary btn-sm">
+    <i class="glyphicon glyphicon-edit"></i>
+    Edit Lesson
+  </a>
+  <a href="/lessons/{{book.id}}/cleanclasswork" class="btn btn-danger btn-sm">
+    <i class="glyphicon glyphicon-trash"></i>
+    clean classwork
+  </a>
+  <a href="/lessons/{{book.id}}/delete" class="btn btn-danger btn-sm">
+    <i class="glyphicon glyphicon-trash"></i>
+    Delete Lesson
+  </a>
+</div>
+{% endif %}
+<div class="media">
+  <div class="media-left">
+    {% if book.imageUrl %}
+      <img class="book-image" src="{{book.imageUrl}}">
+    {% else %}
+    {% endif %}
+  </div>
+
+</div>
+<div class="media-body">
+  <h4 class="book-title">
+    {{book.Title}}
+    <small>{{book.logDate}}</small>
+  </h4>
+  <div>{{book.Descr|safe }} </div>
+  <small class="book-added-by">for {{book.Classno}} created by userid( {{book.get('createdById')|default('Anonymous', True)}})</small>
+</div>
+<h4>Lecture:</h4>
+{% for file in lecturesfile %}
+<div class="media">
+  <a href="/lessons/{{book.id}}/downloadlecture/{{file.f}}">
+    <span>{{file.n}}</span>
+  </a>
+</div>
+{% else %}
+<p>No files found</p>
+{% endfor %}
+<h4>Classwork:</h4>
+{% for file in filenames %}
+<div>
+  <a href="/lessons/{{book.id}}/download/{{file.f}}">
+    <span>{{file.n}}</span>
+  </a>
+</div>
+{% else %}
+<p>No files found</p>
+{% endfor %}
+<form method="post" action="/lessons/{{book.id}}/upload" enctype="multipart/form-data">
+  <dl>
+  <p>
+    <input type="file" name="files[]" multiple="true" autocomplete="off" required>
+  </p>
+  </dl>
+  <p>
+  <input type="submit" value="提交功課"">
+  <span>MAX_CONTENT_LENGTH = 8 * 1024 * 1024</span>
+</p>
+</form>
+{% endblock %}
+

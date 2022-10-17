@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load mytags %}﻿​
+{% load staticfiles %}
+{% block title %}text{% endblock %}
+
+
+
+
+{% block content %}
+
+
+    {% for area in area_all %}
+
+        {{ area }}
+    {% endfor %}
+
+
+
+    {% for line in assets_all %}
+        {{ line }}
+    {% endfor %}
+
+
+    <!-- {% autoescape off %} -->
+        {{ rack_rail_template }}
+        <!-- {% endautoescape %} -->
+
+
+{% endblock %}

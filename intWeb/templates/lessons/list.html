@@ -1,0 +1,42 @@
+{#
+# Copyright 2020 Inc.
+#}
+
+{% extends "lessons/base.html" %}
+
+{% block content %}
+{% if session.profile and session.profile.Role == "1" %}
+<h4>課程</h4>
+<a href="/lessons/add" class="btn btn-success btn-sm">
+  <i class="glyphicon glyphicon-plus"></i>
+  Add 課程
+</a>
+{% endif %}
+{% for book in books %}
+<div class="media">
+  <a href="/lessons/{{book.id}}">
+    <div class="media-left">
+      {% if book.imageUrl %}
+        <img style="max-width:200px" src="{{book.imageUrl}}">
+      {% else %}
+      {% endif %}
+    </div>
+    <div class="media-body">
+      <h4>{{book.Title}}</h4>
+      <p>{{book.Classno}}</p>
+    </div>
+  </a>
+</div>
+{% else %}
+<p>No lessons found</p>
+{% endfor %}
+
+{% if next_page_token %}
+<nav>
+  <ul class="pager">
+    <li><a href="?page_token={{next_page_token}}">More</a></li>
+  </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

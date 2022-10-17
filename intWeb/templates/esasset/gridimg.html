@@ -1,0 +1,171 @@
+{#
+# Copyright 2015 Inc.
+#}
+
+{% extends "esasset/base.html" %}
+
+{% block content %}
+<style>
+  .container {
+    padding: 1px;
+    margin: 1;
+    width: 98%
+  }
+</style>
+
+<script src='/static/javascripts/cool/grid_v2.js?v=7'></script>
+<script src='/static/javascripts/cool/table2csv.js'></script>
+<link rel='stylesheet' href='/static/javascripts/cool/grid.css' />
+<style>
+  @media print {
+    .no-print {
+      display: none;
+      visibility: hidden !important;
+      height: 0;
+      width: 0;
+    }
+
+    a[href]:after {
+      display: none;
+      visibility: hidden;
+    }
+  }
+</style>
+<h4>{{book.Lesson}} {{book.Title}}</h4>
+<div class="btn-group no-print">
+
+  {% if session.profile and session.profile.Role < "8" %} <a href="/EsAsset/{{book.id}}" class="btn btn-primary btn-sm">
+    <i class="glyphicon glyphicon-menu-left"></i>
+    返回 專案
+    </a>
+    <a href="#" class="btn btn-primary btn-sm" id="exportCSV">
+      <i class="glyphicon glyphicon-cloud-download"></i>
+      下戴CSV
+    </a>
+    <a href="#" class="btn btn-primary btn-sm" id="editbtn">
+      <i class="glyphicon glyphicon-edit"></i>
+      編輯
+    </a>
+    <a href="#" class="btn btn-primary btn-sm" id="readmodebtn">
+      <i class="glyphicon glyphicon-edit"></i>
+      唯讀
+    </a>
+    <a href="#" class="btn btn-success btn-sm" id="savebtn">
+      <i class="glyphicon glyphicon-floppy-disk"></i>
+      儲存
+    </a>
+    <a href="#" class="btn btn-primary btn-sm" onclick="calcTotalbtn();">
+      <i class="glyphicon glyphicon-scale"></i>
+      運算
+    </a>
+    <a href="#" class="btn btn-success btn-sm" onclick="status_place_chg();">
+      <i class="glyphicon glyphicon-floppy-disk"></i>
+      儲存搬移日誌
+    </a>
+    <a href="itemgridMTCode" class="btn btn-primary btn-sm" id="exportMTCODEXX">
+      <i class="glyphicon glyphicon-cloud-download"></i>
+        列印物品碼
+    </a>
+
+    {% endif %}
+</div>
+<div class="myImage" id="myImage" style="display: none;">
+  <img src="#" alt="myimage" id="myImageSrc" />
+</div>
+<script>
+$('div.myImage').dialog( {autoOpen: false,      height: 500,      width: 800,  modal: true,});  
+function show_image(src, width, height, alt) {
+  //var img = document.createElement("myImageSrc");
+  
+  var img = document.getElementById("myImageSrc");
+  img.src = src;
+  //img.width = //width;
+  img.height = 500;//height;
+  //img.alt = alt;
+  $("#myImage").dialog( "open" );
+  // This next line will just add it to the <body> tag
+  //document.body.appendChild(img);
+}
+</script>
+
+<div class="media">
+  <div class="media-left">
+    {% if book.imageUrl %}
+    <img class="book-image" width=100 src="{{book.imageUrl}}">
+    {% else %}
+    {% endif %}
+  </div>
+</div>
+<div class="media-body">
+  <table class="table">
+    <tr>
+      <td>id,項目代號</td>
+      <td>專案項目名稱</td>
+      <td>學年</td>
+      <td>登記日期</td>
+      <td>vouchernum</td>
+      <td>invoicenum</td>
+      <td>supplier</td>
+      <td>createdById</td>
+    </tr>
+    <tr>
+      <td>
+        <a href="/EsAsset/{{book.id}}">{{book.id}}.{{book.acno}}</a>
+      </td>
+      <td>
+        <h4>{{book.acc}}</h4>
+      </td>
+      <td>
+        <h4>{{book.sess}}</h4>
+      </td>
+      <td>
+        {{book.regSDate}}
+      </td>
+      <td>
+        {{book.vouchernum if book.vouchernum is not none}}
+      </td>
+      <td>
+        {{book.invoicenum if book.invoicenum is not none}}
+      </td>
+      <td>
+        {{book.supplier if book.supplier is not none}}
+      </td>
+      <td>
+        {{book.createdById if book.createdById is not none}}
+      </td>
+  </table>
+  <p>{{book.describ | safe}}</p>
+</div>
+  <h5>明細</h5>
+  {% set acc_id=book.id %}
+  {% include 'esasset/control/itemtableimg.html' %}
+
+  <script>
+    $("#exportMTCODE").on('click',
+     function (event) {
+      console.log('contructing...');
+       //var args = [$('#EDUTBL'), 'export_{{acc_id}}_items.csv'];
+       //exportTableToCSV.apply(this, args);
+     });
+    $("#exportCSV").on('click', function (event) {
+      var args = [$('#EDUTBL'), 'export_{{acc_id}}_items.csv'];
+      exportTableToCSV.apply(this, args);
+    });
+    //var PostUrl='/EsAsset/{{acc_id}}/item/api/JSON/update' ;    
+    var PostUrl = '/EsAsset/{{acc_id}}/item/api/JSON/updateSet';
+    //var PostUrl='item/api/JSON/updateSet' ;    
+    $(document).ready(function () {
+      BindingFunctions("editbtn", "savebtn", 'readmodebtn');
+      BindingHead_EditMode(['MA_H', 'MB_H', 'MC_H', 'MD_H', 'ME_H', 'MF_H', 'MG_H', 'MH_H', 'MI_H', , 'MJ_H', 'MK_H', 'ML_H', 'MM_H', 'MN_H', 'MO_H', 'MP_H', 'MQ_H', 'MR_H', 'MS_H', 'MT_H', 'MU_H', 'MV_H', 'MW_H', 'MX_H', 'MZ_H']);
+      BindingFieldDefsIntegerFields({  'MB': 'INT', 'MF': 'INT', 'MG': 'INT', 'MH': 'INT', 'MI': 'INT', 'MJ': 'INT'});
+      //BindingFieldDefsIntegerFields({'MB':'INT'});
+      GenOriginalData();
+      $('#saveDataSetbtn').click(function (event) {
+      });
+      $('td').filter(function () {
+        return this.innerHTML.match(/^[0-9\s\.,]+$/);
+      }).css('text-align', 'right');
+    });  
+  </script>
+
+  {% endblock %}

@@ -22,3 +22,16 @@ list
 
 2.細項分類定義  
 
+3.git command
+```cmd
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/lammou2020/mtmng.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin https://github.com/lammou2020/mtmng.git
+git branch -M main
+git push -u origin main
+```

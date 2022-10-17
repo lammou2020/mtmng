@@ -1,0 +1,55 @@
+{#
+# Copyright 2020  Inc.
+#
+#}
+
+{% extends "lessons/base.html" %}
+
+{% block content %}
+<h3>{{action}} Asset</h3>
+<script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<form method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="Lesson">Lesson</label>
+    <input type="text" name="Lesson" id="Lesson" value="{{book.Lesson}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="Title">Title</label>
+    <input type="text" name="Title" id="Title" value="{{book.Title}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="Path">Path</label>
+    <input type="text" name="Path" id="Path" value="{{book.Path}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="Classno">Classno</label>
+    <input type="text" name="Classno" id="Classno" value="{{book.Classno}}" class="form-control"/>
+  </div>  
+  <div class="form-group">
+    <label for="Open">Open lesson 0/1</label>
+    <input type="text" name="Open" id="Open" value="{{book.Open}}" class="form-control" placeholder="" pattern="([0-9]+)" title="Enter Number" />
+  </div>  
+  <div class="form-group">
+    <label for="logDate">Date</label>
+    <input type="text" name="logDate" id="logDate" value="{{book.logDate}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="Descr">Description</label>
+    <textarea name="Descr" id="Descr" class="form-control">{{book.Descr}}</textarea>
+    <script>
+      CKEDITOR.replace( 'Descr' );
+    </script>
+  </div>
+  <div class="form-group">
+    <label for="image">Cover Image</label>
+    <input type="file" name="image" id="image" class="form-control"/>
+  </div>
+  <div class="form-group hidden">
+    <label for="createdById">Created by ID</label>
+    <input type="text" name="createdById" id="createdById" value="{{book.createdById}}" class="form-control"/>
+  </div>
+
+  <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}

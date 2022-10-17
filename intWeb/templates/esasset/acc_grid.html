@@ -1,0 +1,97 @@
+{#
+    # Copyright 2015 Inc.
+    #}
+    
+    {% extends "esasset/base.html" %}
+    
+    {% block content %}
+    <style>
+      .container {padding:0px;margin:0;width: 100%;}
+      textarea{
+        min-width:60px;
+        min-height: 40px;
+        overflow-y:visible;
+        padding:0;margin:0;outline: none;overflow: auto;}
+      
+      td{padding:10px;margin:0}
+    </style>
+    <script src='/static/javascripts/cool/grid_v2.js?v=3' ></script>
+    <script src='/static/javascripts/cool/table2csv.js' ></script>
+    <link rel='stylesheet' href='/static/javascripts/cool/grid.css'  />
+    <style>
+      td {padding-right: 5px; padding-left: 5px; }
+      th{min-width: 100px;}
+    </style>
+    <div>
+      <a href="#" onclick="AddBlankRows();" class="btn btn-primary btn-sm">
+        <i class="glyphicon glyphicon-edit"></i>
+        增加多項細項
+      </a>        
+      <a href="#" class="btn btn-primary btn-sm" id="exportCSV">
+        <i class="glyphicon glyphicon-edit"></i>
+        下戴CSV
+       </a>
+       <a href="#" class="btn btn-primary btn-sm" id="editbtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        編輯
+       </a>     
+       <a href="#" class="btn btn-primary btn-sm"id="readmodebtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        唯讀
+       </a>
+       <a href="#" class="btn btn-success btn-sm" id="savebtn">
+        <i class="glyphicon glyphicon-edit"></i>
+        儲存
+       </a>
+  
+       <a href="#" class="btn btn-primary btn-sm" onclick="calcTotalbtn();">
+        <i class="glyphicon glyphicon-edit"></i>
+        淨值運算
+      </a>
+      <a href="#" class="btn btn-success btn-sm" onclick="status_place_chg();">
+        <i class="glyphicon glyphicon-edit"></i>
+        位置異動日誌儲存
+      </a>   
+  
+      </div>
+
+      <h3>明細</h3>
+    
+    {% include 'esasset/control/acc_table.html' %}
+    
+    <script>
+      //acc/addbatch/0?
+      //acc/updateSet
+      function AddBlankRows(){
+        let _url="acc/addbatch/0?" 
+        let number_for_rows = prompt("Please enter number for rows", "0");
+        var reg = /^\d+$/;
+        if (number_for_rows != null && reg.test(number_for_rows)) {
+          window.location.href=_url.replace("/0?",`/${number_for_rows}?`);
+        } 
+      }
+      $("#exportCSV").on('click', function(event) {
+        var args = [$('#EDUTBL'), 'export_acc.csv'];
+        exportTableToCSV.apply(this, args);
+      });
+  
+      var PostUrl='acc/JSON/update' ;    
+      //var PostUrl='item/api/JSON/updateSet' ;    
+      $(document).ready(function(){
+          BindingFunctions("editbtn","savebtn",'readmodebtn');
+          BindingHead_EditMode(['MA_H','MB_H','MC_H','MD_H','ME_H','MF_H','MG_H','MH_H','MI_H',,'MJ_H',
+        'MK_H','ML_H','MM_H','MN_H','MO_H']);
+          //BindingFieldDefsIntegerFields({'MB':'INT','MF':'INT','MG':'INT','MH':'INT','MI':'INT','MJ':'INT'});
+          BindingFieldDefsIntegerFields({});
+          GenOriginalData();
+        $('#saveDataSetbtn').click(function(event) {
+        });
+      });  
+
+  
+      </script>
+  
+    
+    
+    
+    {% endblock %}

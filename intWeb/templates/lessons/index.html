@@ -1,0 +1,85 @@
+{#
+# Copyright 2020 Inc.
+#}
+
+{% extends "lessons/base.html" %}
+
+{% block content %}
+
+<script>
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+  </script>
+
+<div class="row">
+  <div class="col-lg-2">
+    <div id="accordion">
+      <h3>資產</h3>
+      <div style="margin:0;padding:0;">
+          <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />新增單據</a></h4>
+          <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />單據明細</a></h4>
+      </div>
+      <h3>處理</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />搬移</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />註銷</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />變換</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />變賣</a></h4>
+      </div>
+      <h3>報表</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按物品分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按資產分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按資產分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按項目編號</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按部門分類</a></h4>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {% if session.profile and session.profile.Role == "1" %}
+    <h4>單據</h4>
+    <a href="/EsAsset/ACC/add" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add ACC
+    </a>
+    <h4>資產</h4>
+    <a href="/EsAsset/ASSET/add" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add ASSET
+    </a>    
+    {% endif %}
+    {% for book in books %}
+    <div class="media">
+      <a href="/EsAsset/{{book.id}}">
+        <div class="media-left">
+          {% if book.imageUrl %}
+          <img style="max-width:200px" src="{{book.imageUrl}}">
+          {% else %}
+          {% endif %}
+        </div>
+        <div class="media-body">
+          <h4>{{book.Title}}</h4>
+          <p>{{book.Classno}}</p>
+        </div>
+      </a>
+    </div>
+    {% else %}
+    <p>No asset found</p>
+    {% endfor %}
+    
+    {% if next_page_token %}
+    <nav>
+      <ul class="pager">
+        <li><a href="?page_token={{next_page_token}}">More</a></li>
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+<footer>
+  <p class="float-right"><a href="#">Back to top</a></p>
+  <small>Copyright&nbsp;&#169; 1999 Macau Baptist College.All Rights Reserved</small>
+</footer>
+{% endblock %}

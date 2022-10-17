@@ -1,0 +1,58 @@
+{#
+    # Copyright 2015 Inc.
+    #}
+    
+    {% extends "esasset/base.html" %}
+    
+    {% block content %}
+    <div>查詢Acc單據或專案項目</div>
+     
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group hidden">
+            <label for="TableName">TableName</label>
+            <input type="text" name="TableName" value="Acc" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label for="FieldName">Field Name</label>
+            <select name="FieldName" class="form-control">
+                <option value="acno">acno</option>
+                <option value="acc">acc</option>
+                <option value="vouchernum">vouchernum</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="FieldValue">Value</label>
+            <input type="text" name="FieldValue" value="" required=true class="form-control"/>
+        </div>
+
+        <button type="submit" class="btn btn-success">Query</button>
+    </form>      
+    <hr>
+    <div>查詢Item資產</div>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group hidden">
+            <label for="TableName">TableName</label>
+            <input type="text" name="TableName" value="Item" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label for="FieldName">Field Name</label>
+            <select name="FieldName" class="form-control">
+                <option value="itemno">    itemno    </option>
+                <option value="itemcatno"> itemcatno </option>
+                <option value="cate">      cate      </option>
+                <option value="sess">      sess      </option>
+                <option value="vouchernum">vouchernum</option>
+                <option value="invoicenum">invoicenum</option>
+                <option value="acc_acno">  acc_acno       </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="FieldValue">Value</label>
+            <input type="text" name="FieldValue" value="" required=true class="form-control"/>
+        </div>
+        <button type="submit" class="btn btn-success">Save</button>
+    </form>      
+
+    <script>
+    </script>
+    {% endblock %}

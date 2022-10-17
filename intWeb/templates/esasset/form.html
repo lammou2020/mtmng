@@ -1,0 +1,68 @@
+{#
+# Copyright 2020  Inc.
+#
+#}
+
+{% extends "esasset/base.html" %}
+
+{% block content %}
+<h3>{{action}} 專案項目</h3>
+<script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<form method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="acno">代號 FA年份-部門-編號/-分號 FA0000-TMP-000-000</label>
+    <input type="text" name="acno" id="acno" value="{{book.acno}}" placeholder="FA0000-DEP-000-000 " required=true pattern="([0-9]{4}[0-9]{+})" title="Enter 2021001" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="Title">專案名稱acc</label>
+    <input type="text" name="acc" id="acc" value="{{book.acc}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="sess">學年</label>
+    <input type="text" name="sess" id="sess" value="{{book.sess}}" required=true class="form-control"/>
+  </div>
+
+  <div class="form-group">
+    <label for="regSDate">登記日期regSDate</label>
+    <input name="regSDate" value="{{book.regSDate}}" placeholder="YYYY-MM-DD" pattern="([0-9]{4}-[0-9]{2}-[0-9]{2})|()" title="Enter a date in this format YYYY-MM-DD" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="vouchernum">vouchernum</label>
+    <input name="vouchernum" value="{{book.vouchernum}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="invoicenum">invoicenum</label>
+    <input name="invoicenum" value="{{book.invoicenum}}"  class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="supplier">supplier</label>
+    <input name="supplier" value="{{book.supplier}}"  class="form-control"/>
+  </div>      
+  <div class="form-group">
+    <label for="netdev">netdev</label>
+    <input name="netdev" value="{{book.netdev}}"  class="form-control"/>
+  </div>      
+  <div class="form-group">
+    <label for="describ">Description</label>
+    <textarea name="describ" id="describ" class="form-control">{{book.describ}}</textarea>
+    <script>
+      CKEDITOR.replace( 'describ' );
+    </script>
+  </div>
+  <div class="form-group">
+    <label for="Path">Path</label>
+    <input type="text" name="Path" id="Path" value="{{book.Path}}" class="form-control"/>
+  </div>
+  <div class="form-group">
+    <label for="image">Cover Image</label>
+    <input type="file" name="image" id="image" class="form-control"/>
+  </div>
+  <div class="form-group hidden">
+    <label for="createdById">Created by ID</label>
+    <input type="text" name="createdById" id="createdById" value="{{book.createdById}}" class="form-control"/>
+  </div>
+
+  <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}

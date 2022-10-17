@@ -1,0 +1,110 @@
+{% extends "esasset/base.html" %}
+{% block content %}
+<script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<script>
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+</script>
+<div class="row">
+  <div class="col-lg-2">
+    <div id="accordion">
+      <h3>資產</h3>
+      <div style="margin:0;padding:0;">
+          <h4 style="margin:0;padding:0;"><a href=/EsAsset/add><img src="/static/images/markicon/edit.png" />新增專案</a></h4>
+          <h4 style="margin:0;padding:0;"><a href=/EsAsset/1/item/add><img src="/static/images/markicon/edit.png" />新增產品明細</a></h4>
+      </div>
+      <h3>科目分類</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4261><img src="/static/images/markicon/edit.png" />課室傢具4261</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4269><img src="/static/images/markicon/edit.png" />其他傢具4269</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4271><img src="/static/images/markicon/edit.png" />電腦4271</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4274><img src="/static/images/markicon/edit.png" />視聽及實驗儀器</a></h4>
+      </div>
+      <h3>會計編號分類</h3>
+      <div style="margin:0;padding:0;">
+  
+        <label for="itemno">會計4271分類002序001</label><br>
+        {% include 'esasset/control/itemTypeSel.html' %}
+        <input type="text" name="itemcatno" id="itemcatno" value="" placeholder="PPPPNNNNNN" pattern="([0-9]{4}[0-9]{6}[0-9]{*})|None|()" title="Enter 427100001 (電腦類4271)" class="form-control"/>
+        <label for="name">產品名稱</label>
+        <input type="text" name="name" id="name" value="" class="form-control"/>
+        <button onclick="showCategoryItemList();">查詢</button>
+      </div>
+      <h3>地點分類</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/309><img src="/static/images/markicon/edit.png" />課室309</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/借出><img src="/static/images/markicon/edit.png" />借出</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/接管><img src="/static/images/markicon/edit.png" />接管</a></h4>
+      </div>      
+      <h3>報表</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/snitemlist/80DW><img src="/static/images/markicon/edit.png" />按物品SN</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/modelitemlist/dell-latitude><img src="/static/images/markicon/edit.png" />按物品Model</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按物品分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按資產分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按項目編號</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按部門分類</a></h4>
+      </div>
+      <h3>關於</h3>
+      <div style="margin:0;padding:0;">
+        <div>學校資訊資產管理部門內部,至2021.11.19起2000千元或以上資產進行登記。 </div>         
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {% if session.profile and session.profile.Role == "1" %}
+    <h4>專項</h4>
+    <a href="/EsAsset/add" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add 專案
+    </a>
+    <h4>資產</h4>
+    <a href="/EsAsset/1/item/add" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add 產品
+    </a>    
+    {% endif %}
+    {% for book in books %}
+    <div class="media">
+      <a href="/EsAsset/{{book.id}}">
+        <div class="media-left">
+          {% if book.imageUrl %}
+          <img style="max-width:100px" src="{{book.imageUrl}}">
+          {% else %}
+          <img style="max-width:100px;width:100px" src="/static/images/report1.png">
+          {% endif %}
+        </div>
+        <div class="media-body">
+          <h4>{{book.acno}}</h4>
+          <p>{{book.acc}}</p>
+        </div>
+      </a>
+    </div>
+    {% else %}
+    <p>No asset found</p>
+    {% endfor %}
+    {% if next_page_token %}
+    <nav>
+      <ul class="pager">
+        <li><a href="?page_token={{next_page_token}}">More</a></li>
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+<script>
+  function showCategoryItemList(){
+    let itemno=$("#itemno").val();
+    if(itemno.length==10) itemno=itemno.substring(0,7)
+    if(itemno=="4271046") itemno="42710460"
+    window.location.href = "/EsAsset/categoryitemlist/"+itemno;
+  }
+</script>
+<footer>
+  <p class="float-right"><a href="#">Back to top</a></p>
+  <small>Copyright&nbsp;&#169; 1999 Macau Baptist College.All Rights Reserved</small>
+</footer>
+{% include 'esasset/control/itemcategory.html' %}
+{% include 'esasset/control/itemcategory_act.html' %}
+{% endblock %}

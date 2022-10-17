@@ -1,0 +1,184 @@
+<table id="EDUTBL" class="table">
+  <tr>
+    <td class="small">序</td>
+    <td class="small">編號</td>
+    <td id="MA_H">校內編號</td>
+    <td id="MB_H" style="min-width: 100px;">產品名稱</td>
+    <td id="MC_H">型號</td>
+    <td id="MD_H">SN/PN</td>
+    <td id="ME_H">數量</td>
+    <td id="MF_H">單價</td>
+    <td id="MG_H">攤折</td>
+    <td id="MH_H">淨值</td>
+    <td id="MI_H">資助額</td>
+    <td id="MJ_H">資助單位/個人</td>
+    <td id="MK_H">位置</td>
+    <td id="ML_H">保管人</td>
+    <td id="MM_H">備註</td>
+    <td id="MN_H">登錄日期</td>
+    <td>專案編號</td>
+  </tr>
+  {% for item_ in items %}
+  <tr>
+    <td class="small">{{loop.index}}</td>
+    <td class="small"><a href="/EsAsset/{{acc_id}}/item/{{item_.id}}">{{item_.id}}</a></td>
+    <td class="M" id="MA_itemno_{{item_.id}}">{{item_.itemno if item_.itemno is not none}}</td>
+    <td class="M" id="MB_name_{{item_.id}}">{{item_.name}}</td>
+    <td class="M" id="MC_model_{{item_.id}}">{{item_.model}}</td>
+    <td class="M" id="MD_sn_{{item_.id}}">{{item_.sn}}</td>
+    <td class="M" id="ME_quantity_{{item_.id}}">{{item_.quantity}}</td>
+    <td class="M" id="MF_price_{{item_.id}}">{{item_.price}}</td>
+    <td class="M" id="MG_adjust_{{item_.id}}">{{item_.adjust}}</td>
+    <td class="M" id="MH_amount_{{item_.id}}">{{item_.amount}}</td>
+    <td class="M" id="MI_fund-amount_{{item_.id}}">{{item_.fund_amount}}</td>
+    <td class="M" id="MJ_fund-name_{{item_.id}}">{{item_.fund_name}}</td>
+    <td class="M" id="MK_place_{{item_.id}}">{{item_.place}}</td>
+    <td class="M" id="ML_keeper_{{item_.id}}">{{item_.keeper}}</td>
+    <td class="M" id="MM_note1_{{item_.id}}">{{item_.note1}}</td>
+    <td class="M" id="MN_regSDate_{{item_.id}}">{{item_.regSDate}}</td>
+    {% if session.profile and session.profile.user=='admin' and False %}
+    <td class="M" id="MZ_acc-acno_{{item_.id}}">{{item_.acc_acno}}</td>
+    {% else %}
+    <td>{{item_.acc_acno}}</td>
+    {% endif %}
+  </tr>
+  {% else %}
+  <tr>
+    <td>No item found</td>
+  </tr>
+  {% endfor %}
+</table>
+<div id="es_msgbox">
+  <div id="es_msgbox_txt"></div>
+</div>
+<script>
+  var es_msgbox = $("#es_msgbox").dialog({
+    autoOpen: false, height: 700, width: 500, modal: true,
+    open: function (event, ui) { $("#es_msgbox_txt").html("") },
+    buttons: {
+      Cancel: function () { es_msgbox.dialog("close"); }
+    }
+  });
+  function status_place_chg() {
+    closeedit();
+    es_msgbox.dialog("open");
+    var table = document.getElementById("EDUTBL");
+    let json = {}
+    let curr_itemno = null;
+    for (var i = 0, row; row = table.rows[i]; i++) {
+      if (row.cells[0].innerHTML == "-") continue;
+      for (var j = 0, col; col = row.cells[j]; j++) {
+        if (col.id && col.id.indexOf("itemno") > -1 && col.innerHTML != "") {
+          curr_itemno = col.innerHTML;
+          if (curr_itemno in json) { } else { json[curr_itemno] = { "itemno": curr_itemno }; }
+        }
+        if (col.id && col.id.indexOf("place") > -1) { json[curr_itemno]["place"] = col.innerHTML; }
+        if (col.id && col.id.indexOf("keeper") > -1) { json[curr_itemno]["keeper"] = col.innerHTML; }
+      }
+    }
+    for (let itemno_ in json) {
+      if (json[itemno_]["place"] == "" && json[itemno_]["keeper"] == "") { }
+      else {
+        $.ajax({
+          url: `/EsAsset/api/JSON/getItemnoMoveLog_by_itemno/${itemno_}`,
+          method: "GET",
+          contentType: "application/json",
+        }).done(function (data) {
+          if (data.length > 0 && json[itemno_]["place"] == data[0]["place"] && json[itemno_]["keeper"] == data[0]["keeper"]) {
+            let temp_ = $("#es_msgbox_txt").html()
+            $("#es_msgbox_txt").html(temp_ + "<br>" + JSON.stringify(data))
+          } else {
+            $.ajax({
+              method: "POST",
+              url: `/EsAsset/api/JSON/pushItemnoMoveLog`,
+              data: JSON.stringify(json[itemno_]),
+              contentType: "application/json"
+            }).done(function (data_) {
+              let temp_ = $("#es_msgbox_txt").html()
+              $("#es_msgbox_txt").html(temp_ + "<br>新增轉移記錄:<br>" + JSON.stringify(data_))
+            });
+          }
+        });
+      }
+    }
+  }
+  function calcTotalbtn() {
+    closeedit();
+    var table = document.getElementById("EDUTBL");
+    let total_quantity = 0;
+    let total_amount = 0;
+    for (var i = 0, row; row = table.rows[i]; i++) {
+      if (row.cells[0].innerHTML == "-") continue;
+      let price = 0;
+      let quantity = 0;
+      let amount = 0;
+      for (var j = 0, col; col = row.cells[j]; j++) {
+        console.log(col.id, col.innerHTML)
+        if (col.id && col.id.indexOf("price") > -1) price = Number(col.innerHTML)
+        if (col.id && col.id.indexOf("quantity") > -1) quantity = Number(col.innerHTML)
+        if (col.id && col.id.indexOf("amount") > -1) {
+          amount = price * quantity
+          col.innerHTML = amount
+          total_amount += amount
+          total_quantity += quantity
+          break;
+        }
+      }
+    }
+    let totalrow = table.rows[table.rows.length - 1];
+    console.log(totalrow.cells[0])
+    if (totalrow.cells[0].innerHTML != "-") {
+      totalrow = table.insertRow();
+      var cell1 = totalrow.insertCell(0);
+      var cell2 = totalrow.insertCell();
+      var cell3 = totalrow.insertCell();
+      var cell4 = totalrow.insertCell();
+      var cell5 = totalrow.insertCell();
+      var cell6 = totalrow.insertCell();
+      var cell7 = totalrow.insertCell();
+      var cell8 = totalrow.insertCell();
+      var cell9 = totalrow.insertCell();
+      var cell10 = totalrow.insertCell();
+      cell1.innerHTML = "-";
+      cell3.innerHTML = "小計";
+      cell7.innerHTML = total_quantity;
+      cell10.innerHTML = total_amount;
+    }else{
+      totalrow.cells[6].innerHTML=total_quantity;
+      totalrow.cells[9].innerHTML=total_amount 
+    }
+  }
+
+  function saveTotal(PostUrl) {
+    closeedit();
+    es_msgbox.dialog("open");
+    var table = document.getElementById("EDUTBL");
+    let json = {}
+    let curr_itemno = null;
+    for (var i = 0, row; row = table.rows[i]; i++) {
+      if (row.cells[0].innerHTML == "-") continue;
+      for (var j = 0, col; col = row.cells[j]; j++) {
+        for (let fieldname of ["adjust", "amount"]) {
+          if (col.id && col.id.indexOf(`_${fieldname}_`) > -1) {
+            let elarr = col.id.split("_")
+            curr_itemno = elarr[2];
+            if (curr_itemno in json) { } else { json[curr_itemno] = {}; }
+            json[curr_itemno][fieldname] = col.innerHTML
+          }
+        }
+      }
+    }
+    for (let itemno_ in json) {
+      console.log(json[itemno_])
+      $.ajax({
+        method: "POST",
+        url: PostUrl + `/${itemno_}`,
+        data: JSON.stringify(json[itemno_]),
+        contentType: "application/json"
+      }).done(function (data_) {
+        let temp_ = $("#es_msgbox_txt").html();
+        $("#es_msgbox_txt").html(temp_ + "<br>攤折及淨值 update:<br>" + JSON.stringify(data_));
+      });
+    }
+  }
+</script>

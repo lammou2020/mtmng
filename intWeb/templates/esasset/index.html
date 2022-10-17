@@ -1,0 +1,148 @@
+{% extends "esasset/base.html" %}
+{% block content %}
+<script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<script>
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+</script>
+<div class="row">
+  <div class="col-lg-2">
+    <div id="accordion">
+      <h3>資產</h3>
+      <div style="margin:0;padding:0;">
+          <h4 style="margin:0;padding:0;"><a href=/EsAsset/add><img src="/static/images/markicon/edit.png" />新增專案</a></h4>
+          <h4 style="margin:0;padding:0;"><a href=/EsAsset/1/item/add?acno=FA0000-TMP-000-000&regSDate=2022-01-10><img src="/static/images/markicon/edit.png" />新增產品明細</a></h4>
+      </div>
+      <h3>科目分類</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/itemCateGrid><img src="/static/images/markicon/edit.png" />科目分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4261><img src="/static/images/markicon/edit.png" />課室傢具</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4262><img src="/static/images/markicon/edit.png" />辦公室傢具</a></h4>        
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4269><img src="/static/images/markicon/edit.png" />其他傢具</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4271><img src="/static/images/markicon/edit.png" />資訊設備</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4274><img src="/static/images/markicon/edit.png" />視聽及實驗儀器</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/categoryitemlist/4280><img src="/static/images/markicon/edit.png" />教學設備</a></h4>
+      </div>
+      <h3>會計編號分類</h3>
+      <div style="margin:0;padding:0;">
+        <label for="itemno">會計4271分類002序001</label><br>
+        {% include 'esasset/control/itemTypeSel.html' %}
+        <input type="text" name="itemcatno" id="itemcatno" value="" placeholder="PPPPNNNNNN" pattern="([0-9]{4}[0-9]{6}[0-9]{*})|None|()" title="Enter 427100001 (電腦類4271)" class="form-control"/>
+        <label for="name">產品名稱</label>
+        <input type="text" name="name" id="name" value="" class="form-control"/>
+        <button onclick="showCategoryItemList();">查詢</button>
+      </div>
+      <h3>地點分類</h3>
+      <div style="margin:0;padding:0;">
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/309><img src="/static/images/markicon/edit.png" />課室309</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/借出><img src="/static/images/markicon/edit.png" />借出</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/locationitemlist/接管><img src="/static/images/markicon/edit.png" />接管</a></h4>
+      </div>      
+      <h3>報表</h3>
+      <div style="margin:0;padding:0;">
+
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/showacc><img src="/static/images/markicon/edit.png" />acc</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/showitem><img src="/static/images/markicon/edit.png" />item</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/snitemlist/80DW><img src="/static/images/markicon/edit.png" />按物品SN</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=/EsAsset/modelitemlist/dell-latitude><img src="/static/images/markicon/edit.png" />按物品Model</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按物品分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按資產分類</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按項目編號</a></h4>
+        <h4 style="margin:0;padding:0;"><a href=#><img src="/static/images/markicon/edit.png" />按部門分類</a></h4>
+      </div>
+      <h3>關於</h3>
+      <div style="margin:0;padding:0;">
+        <div> </div>         
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {% if session.profile and session.profile.Role == "1" %}
+    <h4>專項</h4>
+    <a href="/EsAsset/add" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add 專案
+    </a>
+    <h4>資產</h4>
+    <a href="/EsAsset/1/item/add?acno=FA0000-TMP-000-000&regSDate=2022-01-10" class="btn btn-success btn-sm">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add 產品
+    </a>    
+    {% endif %}
+    {% for book in books %}
+    <div class="media">
+      <a href="/EsAsset/{{book.id}}">
+        <div class="media-left">
+          {% if book.imageUrl %}
+          <img style="max-width:100px" src="{{book.imageUrl}}">
+          {% else %}
+          <img style="max-width:40px;width:40px" src="/static/images/report1.png">
+          {% endif %}
+        </div>
+        <div class="media-body">
+          <h4>{{book.acno}}</h4>
+          <p>{{book.acc}}</p>
+        </div>
+      </a>
+    </div>
+    {% else %}
+    <p>No asset found</p>
+    {% endfor %}
+    {% if next_page_token %}
+    <nav>
+      <ul class="pager">
+        <li><a href="?page_token={{next_page_token}}">More</a></li>
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+<script>
+  function showCategoryItemList(){
+    let itemno=$("#itemno").val();
+    if(itemno.length==10) itemno=itemno.substring(0,7)
+    if(itemno=="4271046") itemno="42710460"
+    window.location.href = "/EsAsset/categoryitemlist/"+itemno;
+  }
+</script>
+
+<small>update: 2022/01/18</small>
+<table class="table">
+<tr>	<td><a href=/EsAsset/categoryitemlist/4222>4222</a>	</td><td>	校舍	</td><td>	50	</td><td>			</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4231>4231</a>	</td><td>	中央冷暖系統	</td><td>	7	</td><td>		4231|18	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4232>4232</a>	</td><td>	水管電力及	</td><td>	10	</td><td>		4232|12	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4233>4233</a>	</td><td>	防火及安全系統	</td><td>	10	</td><td>		4233|200	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4234>4234</a>	</td><td>	電訊網絡	</td><td>	20	</td><td>		4234|58	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4235>4235</a>	</td><td>	升降系統	</td><td>	10	</td><td>		4235|2	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4249>4249</a>	</td><td>	幼兒玩具設備	</td><td>	5	</td><td>		4249|153	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4251>4251</a>	</td><td>	校車	</td><td>	5	</td><td>		4251|4	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4261>4261</a>	</td><td>	課室傢具	</td><td>	5	</td><td>		4261|458	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4262>4262</a>	</td><td>	辦公室傢具	</td><td>	5	</td><td>		4262|510	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4264>4264</a>	</td><td>	禮堂傢具	</td><td>	5	</td><td>		4264|13	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4269>4269</a>	</td><td>	其他傢具	</td><td>	5	</td><td>		4269|603	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4270>4270</a>	</td><td>	抽氣扇	</td><td>	0	</td><td>		4270|12	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4271>4271</a>	</td><td>	資訊設備	</td><td>	4	</td><td>		4271|1322	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4272>4272</a>	</td><td>	辦公室設備	</td><td>	5	</td><td>		4272|46	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4273>4273</a>	</td><td>	冷氣機及同類機器	</td><td>	5	</td><td>		4273|182	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4274>4274</a>	</td><td>	視聽器材及實驗室儀器	</td><td>	4	</td><td>		4274|607	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4276>4276</a>	</td><td>	課室設備	</td><td>	5	</td><td>		4276|42	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4277>4277</a>	</td><td>	電纜設施	</td><td>	20	</td><td>		4277|12	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4278>4278</a>	</td><td>	廚房設備	</td><td>	5	</td><td>		4278|112	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4279>4279</a>	</td><td>	CD	</td><td>	0	</td><td>		4279|49	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4280>4280</a>	</td><td>	教學設備	</td><td>	5	</td><td>		4280|493	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4284>4284</a>	</td><td>	電腦程序	</td><td>	3	</td><td>		4284|93	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4293>4293</a>	</td><td>	影印機	</td><td>	5	</td><td>		4293|18	</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4294>4294</a>	</td><td>	員工制服	</td><td>	2	</td><td>			</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4295>4295</a>	</td><td>	電器設備	</td><td>	5	</td><td>			</td></tr>
+<tr>	<td><a href=/EsAsset/categoryitemlist/4296>4296</a>	</td><td>	教具器材設備	</td><td>	5	</td><td>			</td></tr>
+
+  
+</table>
+<footer>
+  <p class="float-right"><a href="#">Back to top</a></p>
+  <small>Copyright&nbsp;&#169; 1999 Macau Baptist College.All Rights Reserved</small>
+</footer>
+{% include 'esasset/control/itemcategory.html' %}
+{% include 'esasset/control/itemcategory_act.html' %}
+{% endblock %}
